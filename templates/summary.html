@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Summary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">💰 ExpenseTracker</div>
+            <nav>
+                <a href="{{ url_for('index') }}">📊 Dashboard</a>
+                <a href="{{ url_for('add_expense') }}">➕ Add Expense</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <a href="{{ url_for('index') }}" class="back-link">← Back to Dashboard</a>
+
+        <div class="section-title">📈 Expense Summary</div>
+
+        <!-- Summary Stats -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-value">{{ summary_data|length }}</div>
+                <div class="stat-label">Total Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">
+                    {% if summary_data %}
+                    ₹{{ summary_data.values()|list|sum }}
+                    {% else %}
+                    ₹0
+                    {% endif %}
+                </div>
+                <div class="stat-label">Total Spending</div>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="card" style="text-align: center;">
+            <h2 style="margin-bottom: 2rem; color: #f1f5f9;">Expense Distribution by Category</h2>
+            {% if summary_data %}
+            <div style="position: relative; height: 400px; display: flex; justify-content: center;">
+                <canvas id="summaryChart" style="max-width: 400px;"></canvas>
+            </div>
+            {% else %}
+            <p style="color: #94a3b8; padding: 2rem;">No expense data available yet.</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <script>
+        const labels = JSON.parse('{{ categories|tojson|safe }}');
+        const values = JSON.parse('{{ amounts|tojson|safe }}');
+
+        if (labels.length > 0) {
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Expenses by Category',
+                    data: values,
+                    backgroundColor: [
+                        'rgba(14, 165, 233, 0.8)',
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(236, 72, 153, 0.8)',
+                        'rgba(34, 197, 94, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(168, 85, 247, 0.8)',
+                        'rgba(20, 184, 166, 0.8)',
+                        'rgba(244, 63, 94, 0.8)'
+                    ],
+                    borderColor: 'rgba(30, 41, 59, 0.8)',
+                    borderWidth: 2
+                }]
+            };
+
+            const config = {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#cbd5e1',
+                                font: {
+                                    size: 14,
+                                    weight: '500'
+                                },
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            };
+
+            const ctx = document.getElementById('summaryChart').getContext('2d');
+            new Chart(ctx, config);
+        }
+    </script>
+</body>
+
+</html>

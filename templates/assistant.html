@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Expense Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <!-- Added header with navigation to match other pages -->
+    <header>
+        <div class="header-content">
+            <div class="logo">💰 Expense Tracker</div>
+            <nav>
+                <a href="{{ url_for('index') }}">📊 Dashboard</a>
+                <a href="{{ url_for('add_expense') }}">➕ Add Expense</a>
+                <a href="{{ url_for('summary') }}">📈 Summary</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <a href="{{ url_for('index') }}" class="back-link">← Back to Dashboard</a>
+
+        <div class="section-title">💬 Smart Expense Assistant</div>
+
+        <!-- Wrapped form and content in card container for consistent styling -->
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="query">Ask a Question</label>
+                    <input type="text" id="query" name="query" placeholder="Ask e.g., 'How much did I spend on travel?'"
+                        required>
+                </div>
+                <button type="submit">🔍 Ask</button>
+            </form>
+
+            {% if response %}
+            <!-- Styled response message to match card design -->
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(148, 163, 184, 0.2);">
+                <p style="font-size: 1.1rem; color: #0ea5e9; font-weight: 500;">{{ response }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</body>
+
+</html>
